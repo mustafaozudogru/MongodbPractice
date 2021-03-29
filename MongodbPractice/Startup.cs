@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MongodbPractice.Models;
+using MongodbPractice.Services;
 
 namespace MongodbPractice
 {
@@ -24,6 +20,25 @@ namespace MongodbPractice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+            services.Configure<DbSettings>(Configuration.GetSection("EmployeeDatabaseSettings"));
+
+            services.Configure<DbSettings>(options =>
+            {
+                options.ConnectionString = Configuration.GetSection("EmployeeDatabaseSettings:ConnectionString").Value;
+                options.Database = Configuration.GetSection("EmployeeDatabaseSettings:DatabaseName").Value;
+            });
+
+            services.AddTransient<IProductServices, ProductServices>();
+
             services.AddControllers();
         }
 
