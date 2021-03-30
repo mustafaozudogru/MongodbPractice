@@ -47,7 +47,7 @@ namespace MongodbPractice.Controllers
         }
 
         // PUT api/<ProductController>/.
-        [HttpPut)]
+        [HttpPut]
         public async Task<IActionResult> Put([FromBody] Products request)
         {
             var result = await this.productService.UpdateAsync(request).ConfigureAwait(false);
